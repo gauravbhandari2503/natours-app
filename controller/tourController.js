@@ -11,6 +11,7 @@ exports.aliasTopTours = (req, res, next) => {
     next();
 }
 
+
 exports.getAllTours = factory.getAll(Tour);
 
 // exports.createTour = catchAsync(async (req, res, next) => {
