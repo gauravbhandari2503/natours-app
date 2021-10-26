@@ -114,6 +114,7 @@ const tourSchema = new mongoose.Schema({
 });
 
 tourSchema.index({price: 1, ratingsAverage: -1})  // Indexing helps in querying the result faster, to examine your query use 
+tourSchema.index({ startLocation: '2dsphere' });
 
 tourSchema.virtual('durationWeeks').get(function() {   // whenever we want to use this keyword never use arrorw funtion
     return this.duration/7;
@@ -166,10 +167,10 @@ tourSchema.pre(/^find/, function(next) {
 
 
 // Aggregation Middleware 
-tourSchema.pre('aggregate', function(next) {  // this object point to current aggregate function
-  this.pipeline().unshift({ $match: { secretTour: {$ne: true} } });
-  next();
-})
+// tourSchema.pre('aggregate', function(next) {  // this object point to current aggregate function
+//   this.pipeline().unshift({ $match: { secretTour: {$ne: true} } });
+//   next();
+// })
 
 const Tour = mongoose.model('Tour', tourSchema);
 

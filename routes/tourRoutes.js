@@ -19,10 +19,12 @@ router.route('/monthly-plan/:year')
 router.route('/tour-stats')
     .get(authController.protect, tourController.getTourStats);
 
-router
-    .route('/tours-within/:distance/center/:latlng/unit/:unit')
+router.route('/tours-within/:distance/center/:latlng/unit/:unit')
     .get(tourController.getToursWithin);
 
+router.route('/distances/:latlng/unit/:unit')
+    .get(tourController.getDistances);
+    
 router.route('/')
     .get(tourController.getAllTours)
     .post(authController.protect,  authController.restrictTo('admin','tour-guide'), tourController.createTour);
