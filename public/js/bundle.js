@@ -9238,7 +9238,7 @@ var logOutBtn = document.querySelector('.nav__el--logout'); // Values
 // Delegation
 
 if (mapBox) {
-  var locations = JSON.parse.mapBox.dataset.locations;
+  var locations = JSON.parse(mapBox.dataset.locations);
   (0, _mapbox.displayMap)(locations);
 }
 
