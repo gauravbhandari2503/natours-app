@@ -13,6 +13,7 @@ const app = express();
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 
 
 // server side rendering - using pug template
@@ -44,6 +45,8 @@ app.use(express.json({
     limit: '10kb'
 }));
 
+app.use(cookieParser());
+
 // Data sanitization against NoSQL query injection :EX => in postman keep the password correct and use this "email": {"$gt":""}
 app.use(mongoSanitize());
 // Data sanitization against XSS
@@ -60,6 +63,11 @@ app.use(hpp({
         'price'
     ]
 }));
+
+app.use((req, res, next) => {
+    console.log(req.cookies);
+    next();
+})
 
 // 3) Routes
 app.use('/', viewRouter);

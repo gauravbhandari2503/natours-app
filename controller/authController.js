@@ -25,7 +25,7 @@ const createAndSendToken = (user, statusCode, res) => {
     user.password = undefined;
     
     res.status(statusCode).json({
-        status: 'Success',
+        status: 'success',
         token,
         data: {
             user
@@ -47,6 +47,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async(req, res, next) => {
     const {email, password} = req.body;
+
     //1) Chek email and password
     if (!email || !password) {
         return next(new AppError('please provide email and password', 400));
@@ -62,6 +63,17 @@ exports.login = catchAsync(async(req, res, next) => {
     createAndSendToken(user, 200, res);
 });
 
+
+exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    
+    res.status(200).json({
+        status: 'success'
+    })
+}
 // Protecting the routes using the middleware
 exports.protect = catchAsync(async(req, res, next) => {
     let token;
@@ -69,7 +81,10 @@ exports.protect = catchAsync(async(req, res, next) => {
     // 1) Getting the jwt token and check if it's exist
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt
     }
+    
     if (!token) {
         return next(new AppError('You are not logged in! Please login to get access.',401))
     }
@@ -187,4 +202,35 @@ exports.updatePassword = catchAsync(async(req, res, next) => {
     createAndSendToken(user, 200, res);
     next();
 });
+
+
+// Only for rendered pages and there will be no errors
+exports.isLoggedIn = async(req, res, next) => {
+    if (req.cookies.jwt) {
+        try {
+            token = req.cookies.jwt;
+
+            // 1)Verifies token 
+            const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+        
+            // 2) Check user still exists?
+            const currentUser = await User.findById(decoded.id);
+
+            if (!currentUser) {
+            return next();
+            }
+            // 3) Check if user changed password after the jwt token was issued
+            if (currentUser.changedPasswordAfter(decoded.iat)) {
+                return next();
+            }
+
+            // There is a logged in user
+            res.locals.user = currentUser
+            return next()
+        } catch (err) {
+            return next()
+        }
+    }
+    next();
+};
 
