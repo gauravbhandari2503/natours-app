@@ -47,6 +47,11 @@ app.use(express.json({
 
 app.use(cookieParser());
 
+app.use(express.urlencoded({
+    extended: true,
+    limit: '10kb'
+}));
+
 // Data sanitization against NoSQL query injection :EX => in postman keep the password correct and use this "email": {"$gt":""}
 app.use(mongoSanitize());
 // Data sanitization against XSS

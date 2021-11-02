@@ -31,7 +31,7 @@ router.route('/')
 
 router.route('/:id')
     .get(tourController.getTour)
-    .patch(authController.protect,  authController.restrictTo('admin','tour-guide'), tourController.updateTour)
+    .patch(authController.protect,  authController.restrictTo('admin','tour-guide'), tourController.uploadTourImages, tourController.resizeTourImages, tourController.updateTour)
     .delete(authController.protect,  authController.restrictTo('admin','tour-guide'), tourController.deleteTour);
 
 // Nested post route
