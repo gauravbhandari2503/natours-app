@@ -3,6 +3,7 @@ import { login, logout } from './login';
 import { updateData, updatePassword } from './updateSettings';
 import { signup } from './signup';
 import { displayMap } from './mapbox';
+import { bookTour } from './stripe';
 
 // Dom Elements
 const mapBox = document.getElementById('map');
@@ -11,6 +12,7 @@ const signupForm = document.querySelector('.signup-form');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const updateUserData = document.querySelector('.form-user-data');
 const updateUserPassword = document.querySelector('.form-user-settings');
+const bookBtn = document.getElementById('book-tour');
 
 // Values
 
@@ -83,6 +85,16 @@ if (updateUserPassword) {
         };
 
         updatePassword(userData);
+
+    })
+}
+
+if (bookBtn) {
+    bookBtn.addEventListener('click', e => {
+        debugger;
+        e.target.textContent = 'Processing...';
+        const {tourId} = e.target.dataset;
+        bookTour(tourId);
 
     })
 }
